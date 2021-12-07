@@ -31,12 +31,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
-import com.google.android.gms.maps.model.Circle
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
@@ -60,7 +58,7 @@ class MainActivity : ComponentActivity() {
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
         ) {
-            TestAnimatedVisibility()
+          /*  TestAnimatedVisibility()
             Spacer(modifier = Modifier.size(20.dp))
             TestAnimatedContent()
             Spacer(modifier = Modifier.size(20.dp))
@@ -76,7 +74,14 @@ class MainActivity : ComponentActivity() {
             Spacer(modifier = Modifier.size(20.dp))
             TestRememberInfiniteTransition()
             Spacer(modifier = Modifier.size(20.dp))
-            Gesture()
+            TestSpring()
+            Spacer(modifier = Modifier.size(20.dp))
+            TestGesture()
+            Spacer(modifier = Modifier.size(20.dp))
+            TargetBasedAnimation()*/
+
+            Spacer(modifier = Modifier.size(50.dp))
+            AnimationKeyFrames()
 
         }
     }
@@ -180,21 +185,23 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     fun TestAnimateAsState() {
-        var size by remember { mutableStateOf(100.dp) }
-        val sizeAnim by animateDpAsState(
-            targetValue = size,
-            tween(durationMillis = 1000)
+        var colorState by remember { mutableStateOf(Color.Green) }
+        val colorAnim by animateColorAsState(
+            targetValue = colorState,
+            tween(durationMillis = 5000)
         )
+
         Box(
             modifier = Modifier
                 .fillMaxWidth()
+                .background(colorAnim)
                 .height(200.dp)
         ) {
             ConstraintLayout(modifier = Modifier.fillMaxSize()) {
 
                 val (bt1, bt2, img) = createRefs()
                 Button(
-                    onClick = { size *= 2 },
+                    onClick = { colorState = Color.Red },
                     modifier = Modifier
                         .width(200.dp)
                         .height(50.dp)
@@ -208,7 +215,7 @@ class MainActivity : ComponentActivity() {
                     Text(text = "up")
                 }
                 Button(
-                    onClick = { size /= 2 },
+                    onClick = { colorState = Color.Yellow },
                     modifier = Modifier
                         .width(200.dp)
                         .height(50.dp)
@@ -224,7 +231,7 @@ class MainActivity : ComponentActivity() {
                 Image(
                     painter = painterResource(id = R.drawable.ic_mood),
                     contentDescription = "", modifier = Modifier
-                        .size(sizeAnim)
+                        .size(100.dp)
                         .constrainAs(img) {
                             top.linkTo(parent.top)
                             start.linkTo(parent.start)
@@ -458,27 +465,8 @@ class MainActivity : ComponentActivity() {
 
     }
 
-    data class MySize(val width: Dp, val height: Dp)
-
     @Composable
-    fun MyAnimation(targetSize: MySize) {
-        val animSize: MySize by animateValueAsState<MySize, AnimationVector2D>(
-            targetSize,
-            TwoWayConverter(
-                convertToVector = { size: MySize ->
-                    // Extract a float value from each of the `Dp` fields.
-                    AnimationVector2D(size.width.value, size.height.value)
-                },
-                convertFromVector = { vector: AnimationVector2D ->
-                    MySize(vector.v1.dp, vector.v2.dp)
-                }
-            )
-        )
-    }
-
-
-    @Composable
-    fun Gesture() {
+    fun TestGesture() {
         val offset = remember { Animatable(Offset(0f, 0f), Offset.VectorConverter) }
         Box(
             modifier = Modifier
@@ -502,7 +490,9 @@ class MainActivity : ComponentActivity() {
             Icon(
                 painter = painterResource(id = R.drawable.ic_baseline_where_to_vote_24),
                 contentDescription = "",
-                modifier = Modifier.size(48.dp).offset { offset.value.toIntOffset() }
+                modifier = Modifier
+                    .size(48.dp)
+                    .offset { offset.value.toIntOffset() }
             )
         }
     }
@@ -568,6 +558,136 @@ class MainActivity : ComponentActivity() {
             .offset { IntOffset(offsetX.value.roundToInt(), 0) }
     }
 
+    @Composable
+    fun TestSpring() {
+        var isLarge by remember { mutableStateOf(true) }
+        var numClick by remember { mutableStateOf(1) }
+
+        val value1 by animateDpAsState(
+            targetValue = if (isLarge) 200.dp else 50.dp,
+            animationSpec = spring(
+                dampingRatio = Spring.DampingRatioHighBouncy,
+                stiffness = Spring.StiffnessVeryLow
+            )
+        )
+        val value2 by animateDpAsState(
+            targetValue = if (isLarge) 200.dp else 50.dp,
+            animationSpec = spring(
+                dampingRatio = Spring.DampingRatioMediumBouncy,
+                stiffness = Spring.StiffnessVeryLow
+            )
+        )
+        val value3 by animateDpAsState(
+            targetValue = if (isLarge) 200.dp else 50.dp,
+            animationSpec = spring(
+                dampingRatio = Spring.DampingRatioNoBouncy,
+                stiffness = Spring.StiffnessVeryLow
+            )
+        )
+        ConstraintLayout(
+            modifier = Modifier
+                .fillMaxSize()
+                .animateContentSize()
+        ) {
+            val (bt1, bt2, bt3, img) = createRefs()
+            Button(onClick = {
+                numClick = 1
+                isLarge = !isLarge
+            },
+                modifier = Modifier.constrainAs(bt1) {
+                    top.linkTo(parent.top)
+                    start.linkTo(parent.start)
+                    end.linkTo(bt2.start)
+                }) {
+                Text("Toggle1")
+            }
+            Button(onClick = {
+                numClick = 2
+                isLarge = !isLarge
+            },
+                modifier = Modifier.constrainAs(bt2) {
+                    top.linkTo(parent.top)
+                    start.linkTo(bt1.end)
+                    end.linkTo(bt3.start)
+                }) {
+                Text("Toggle2")
+            }
+            Button(onClick = {
+                numClick = 3
+                isLarge = !isLarge
+            },
+                modifier = Modifier.constrainAs(bt3) {
+                    top.linkTo(parent.top)
+                    start.linkTo(bt2.end)
+                    end.linkTo(parent.end)
+                }) {
+                Text("Toggle3")
+            }
+
+            Icon(
+                painter = painterResource(id = R.drawable.tw_icon),
+                contentDescription = "",
+                modifier = Modifier
+                    .size(
+                        when (numClick) {
+                            1 -> value1
+                            2 -> value2
+                            else -> value3
+                        }
+                    )
+                    .constrainAs(img) {
+                        top.linkTo(bt1.bottom)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    })
+        }
+    }
+
+
+    @Composable
+    fun TargetBasedAnimation() {
+        val anim = remember {
+            TargetBasedAnimation(
+                animationSpec = tween(200),
+                typeConverter = Float.VectorConverter,
+                initialValue = 200f,
+                targetValue = 1000f
+            )
+        }
+        var playTime by remember { mutableStateOf(0L) }
+
+        LaunchedEffect(anim) {
+            val startTime = withFrameNanos { it }
+
+            do {
+                playTime = withFrameNanos { it } - startTime
+                val animationValue = anim.getValueFromNanos(playTime)
+
+            } while (true)
+        }
+    }
+
+    @Composable
+    fun AnimationKeyFrames() {
+
+        var alpha by remember { mutableStateOf(0f) }
+        val value by animateFloatAsState(
+            targetValue = alpha
+        , tween(durationMillis = 2000)
+        )
+        Column(modifier = Modifier.fillMaxSize()) {
+            Button(onClick = { alpha = 1f }) {
+
+            }
+            Icon(
+                painter = painterResource(id = R.drawable.tw_icon),
+                contentDescription = "",
+                modifier = Modifier.alpha(value)
+            )
+        }
+
+
+    }
 
     @Composable
     @Preview
