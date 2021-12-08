@@ -1,4 +1,4 @@
-package com.example.jetbackcomposeexample
+package com.example.jetbackcomposeexample.screen
 
 import android.os.Bundle
 import android.util.Log
@@ -7,13 +7,10 @@ import androidx.activity.compose.setContent
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.animation.graphics.ExperimentalAnimationGraphicsApi
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
+import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.horizontalDrag
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -22,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
@@ -30,15 +28,24 @@ import androidx.compose.ui.input.pointer.util.VelocityTracker
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.example.jetbackcomposeexample.ANIMATED_VISIBILITY
+import com.example.jetbackcomposeexample.R
+import com.example.jetbackcomposeexample.model.MySize
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
+
+enum class StateAnimation {
+    PAUSED, RUNNING
+}
 
 @ExperimentalAnimationGraphicsApi
 @ExperimentalAnimationApi
@@ -47,81 +54,107 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            LayoutAnimation()
+            MainScreen()
         }
     }
 
     @Composable
-    fun LayoutAnimation() {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-        ) {
-          /*  TestAnimatedVisibility()
-            Spacer(modifier = Modifier.size(20.dp))
-            TestAnimatedContent()
-            Spacer(modifier = Modifier.size(20.dp))
-            TestAnimateAsState()
-            Spacer(modifier = Modifier.size(20.dp))
-            TestAnimationContentSize()
-            Spacer(modifier = Modifier.size(20.dp))
-            TestCrossFade()
-            Spacer(modifier = Modifier.size(20.dp))
-            TestUpdateTransition()
-            Spacer(modifier = Modifier.size(20.dp))
-            TestAnimatable()
-            Spacer(modifier = Modifier.size(20.dp))
-            TestRememberInfiniteTransition()
-            Spacer(modifier = Modifier.size(20.dp))
-            TestSpring()
-            Spacer(modifier = Modifier.size(20.dp))
-            TestGesture()
-            Spacer(modifier = Modifier.size(20.dp))
-            TargetBasedAnimation()*/
-
-            Spacer(modifier = Modifier.size(50.dp))
-            AnimationKeyFrames()
-
+    fun MainScreen() {
+        val navController = rememberNavController()
+        NavHost(navController, startDestination = "Main") {
+            composable("Main") { MainScreen() }
         }
-    }
-
-    @Composable
-    fun TestAnimatedVisibility() {
-        ConstraintLayout(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(100.dp)
-        ) {
-            var isVisible by remember { mutableStateOf(true) }
-            val (bt, txt) = createRefs()
+        Column(Modifier.fillMaxSize()) {
             Button(
-                onClick = {
-                    isVisible = !isVisible
-                },
-                modifier = Modifier
-                    .padding(top = 50.dp)
-                    .constrainAs(bt) {
-                        top.linkTo(parent.top)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                    }) {
-                Text("TestAnimationVisibility")
-            }
-            AnimatedVisibility(
-                visible = isVisible,
-                exit = fadeOut(),
-                enter = fadeIn()
+                onClick = { }, modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(top = 15.dp)
             ) {
-                Text(
-                    text = "Hello", modifier = Modifier
-                        .fillMaxWidth()
-                        .constrainAs(txt) {
-                            top.linkTo(bt.bottom)
-                            start.linkTo(parent.start)
-                            end.linkTo(parent.end)
-                        }, fontSize = 30.sp, textAlign = TextAlign.Center
-                )
+                Text(text = "AnimatedVisibility")
+            }
+            Button(
+                onClick = {  }, modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(top = 15.dp)
+            ) {
+                Text(text = "AnimatedContent")
+            }
+            Button(
+                onClick = {  }, modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(top = 15.dp)
+            ) {
+                Text(text = "AnimatedContentSize")
+            }
+            Button(
+                onClick = {  }, modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(top = 15.dp)
+            ) {
+                Text(text = "CrossFade")
+            }
+            Button(
+                onClick = {  }, modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(top = 15.dp)
+            ) {
+                Text(text = "animateAsState")
+            }
+            Button(
+                onClick = {  }, modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(top = 15.dp)
+            ) {
+                Text(text = "Animatable")
+            }
+            Button(
+                onClick = {  }, modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(top = 15.dp)
+            ) {
+                Text(text = "UpdateTransition")
+            }
+            Button(
+                onClick = {  }, modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(top = 15.dp)
+            ) {
+                Text(text = "RememberInfiniteTransition")
+            }
+            Button(
+                onClick = {  }, modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(top = 15.dp)
+            ) {
+                Text(text = "TargetBasedAnimation")
+            }
+            Button(
+                onClick = {  }, modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(top = 15.dp)
+            ) {
+                Text(text = "AnimationSpec")
+            }
+            Button(
+                onClick = {  }, modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(top = 15.dp)
+            ) {
+                Text(text = "Easing")
+            }
+            Button(
+                onClick = {  }, modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(top = 15.dp)
+            ) {
+                Text(text = "AnimationVector")
+            }
+            Button(
+                onClick = {  }, modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(top = 15.dp)
+            ) {
+                Text(text = "VectorDrawable")
             }
         }
     }
@@ -260,17 +293,22 @@ class MainActivity : ComponentActivity() {
                     }) {
                 Text("Change-Crossfade")
             }
-            Crossfade(targetState = currentPage) { screen ->
+            Crossfade(
+                targetState = currentPage,
+                animationSpec = tween(durationMillis = 1000)
+            ) { screen ->
                 when (screen) {
-                    "A" -> Text(
-                        "Page A",
+                    "A" -> Icon(
+                        painter = painterResource(id = R.drawable.ic_baseline_toys_24),
+                        contentDescription = "",
                         modifier = Modifier
                             .padding(top = 30.dp)
+                            .size(120.dp)
                             .constrainAs(txt) {
                                 top.linkTo(bt.bottom)
                                 start.linkTo(parent.start)
                                 end.linkTo(parent.end)
-                            }, style = MaterialTheme.typography.h2
+                            }
                     )
                     "B" -> Text(
                         "Page B",
@@ -291,7 +329,7 @@ class MainActivity : ComponentActivity() {
     @Composable
     fun TestAnimatable() {
         var rs by remember { mutableStateOf(false) }
-        val color = remember { Animatable(Color.Gray) }
+        val scaleAnim = remember { Animatable(1f) }
 
         ConstraintLayout(
             modifier = Modifier
@@ -308,15 +346,21 @@ class MainActivity : ComponentActivity() {
             }
 
             LaunchedEffect(rs) {
-                color.animateTo(
-                    if (rs) Color.Green else Color.Red,
-                    animationSpec = tween(durationMillis = 1000)
-                )
+                if (rs) {
+                    scaleAnim.animateDecay(
+                        1f,
+                        exponentialDecay(
+                            frictionMultiplier = 0.1f,
+                            absVelocityThreshold = 0.1f
+                        )
+                    )
+                }
             }
+
             Box(
                 Modifier
                     .size(100.dp)
-                    .background(color.value)
+                    .scale(scaleAnim.value)
                     .padding(top = 30.dp)
                     .constrainAs(box) {
                         top.linkTo(bt.bottom)
@@ -643,28 +687,130 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-
     @Composable
     fun TargetBasedAnimation() {
-        val anim = remember {
+        val targetBasedAnimation = remember {
             TargetBasedAnimation(
-                animationSpec = tween(200),
+                animationSpec = tween(2000),
                 typeConverter = Float.VectorConverter,
-                initialValue = 200f,
+                initialValue = 0f,
                 targetValue = 1000f
             )
         }
+
+        var playTime = remember { 0L }
+        val animationScope = rememberCoroutineScope()
+
+        var StateAnim by remember { mutableStateOf(StateAnimation.PAUSED) }
+        var animationValue by remember { mutableStateOf(0f) }
+
+        val onClick: () -> Unit = {
+            if (animationValue == 1000f) {
+                animationValue = 0f
+                playTime = 0L
+            }
+
+            StateAnim = when (StateAnim) {
+                StateAnimation.RUNNING -> StateAnimation.PAUSED
+                StateAnimation.PAUSED -> StateAnimation.RUNNING
+            }
+
+            animationScope.launch {
+                val startTime = withFrameNanos { it } - playTime
+
+                while (StateAnim == StateAnimation.RUNNING) {
+                    playTime = withFrameNanos { it } - startTime
+
+                    animationValue = targetBasedAnimation.getValueFromNanos(playTime)
+                }
+            }
+        }
+        Column(modifier = Modifier.fillMaxSize()) {
+            Button(
+                onClick = { onClick.invoke() },
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            ) {
+                Text(text = "Run")
+            }
+
+            Canvas(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black)
+            ) {
+                drawCircle(
+                    color = Color.White,
+                    radius = 40f,
+                    center = Offset(
+                        x = 300f,
+                        y = animationValue
+                    )
+                )
+                Log.d("ManhNQ", "TargetBasedAnimation: $animationValue")
+            }
+        }
+
+    }
+
+    @Composable
+    fun TestDecayAnimation() {
+        val decayAnimation = remember {
+            DecayAnimation(
+                animationSpec = FloatExponentialDecaySpec(
+                    // How quick the animation will stop
+                    frictionMultiplier = 0.3f
+                ),
+                initialValue = 0f,
+                initialVelocity = 600f
+            )
+        }
+
+        // We will manually handle the play time of the animation
         var playTime by remember { mutableStateOf(0L) }
 
-        LaunchedEffect(anim) {
-            val startTime = withFrameNanos { it }
+        val animationScope = rememberCoroutineScope()
+        var StateAnim by remember { mutableStateOf(StateAnimation.PAUSED) }
+        var animationValue by remember { mutableStateOf(0f) }
 
-            do {
-                playTime = withFrameNanos { it } - startTime
-                val animationValue = anim.getValueFromNanos(playTime)
+        val onClick: () -> Unit = {
+            StateAnim = when (StateAnim) {
+                StateAnimation.RUNNING -> StateAnimation.PAUSED
+                StateAnimation.PAUSED -> StateAnimation.RUNNING
+            }
 
-            } while (true)
+            animationScope.launch {
+
+                var startTime = withFrameNanos { it } - playTime
+
+                while (StateAnim == StateAnimation.RUNNING) {
+
+                    if (decayAnimation.isFinishedFromNanos(playTime)) startTime =
+                        withFrameNanos { it }
+
+                    playTime = withFrameNanos { it } - startTime
+                    animationValue = decayAnimation.getValueFromNanos(playTime)
+                }
+            }
         }
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
+        ) {
+            Button(onClick = { onClick.invoke() }) {
+                Text(text = "RUN")
+            }
+            Image(
+                painter = painterResource(id = R.drawable.ic_car),
+                contentDescription = "",
+                modifier = Modifier.offset(
+                    x = animationValue.dp,
+                    y = 250.dp
+                )
+            )
+        }
+
     }
 
     @Composable
@@ -672,8 +818,15 @@ class MainActivity : ComponentActivity() {
 
         var alpha by remember { mutableStateOf(0f) }
         val value by animateFloatAsState(
-            targetValue = alpha
-        , tween(durationMillis = 2000)
+            targetValue = alpha,
+            animationSpec = keyframes {
+                durationMillis = 2000
+                0.2f at 0
+                0.2f at 750
+                0.4f at 1500
+                0.8f at 1750
+                1f at 2000
+            }
         )
         Column(modifier = Modifier.fillMaxSize()) {
             Button(onClick = { alpha = 1f }) {
@@ -685,18 +838,95 @@ class MainActivity : ComponentActivity() {
                 modifier = Modifier.alpha(value)
             )
         }
-
-
     }
 
     @Composable
-    @Preview
-    fun layoutTest() {
-        LayoutAnimation()
+    fun TestEasing() {
+        val CustomEasing = Easing { fraction ->
+            fraction * fraction
+        }
+        var size by remember { mutableStateOf(50.dp) }
+        val widthBt1 by animateDpAsState(
+            targetValue = size,
+            animationSpec = tween(durationMillis = 5000, easing = CustomEasing)
+        )
+
+        val widthBt2 by animateDpAsState(
+            targetValue = size,
+            animationSpec = tween(durationMillis = 5000, easing = LinearEasing)
+        )
+        ConstraintLayout(modifier = Modifier.fillMaxSize()) {
+            val (bt1, bt2, bt3) = createRefs()
+            Button(onClick = { size += 300.dp }, modifier = Modifier
+                .height(48.dp)
+                .constrainAs(bt1) {
+                    top.linkTo(parent.top)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                }) {
+                Text(text = "Change width")
+            }
+            Button(onClick = { /*TODO*/ }, modifier = Modifier
+                .width(widthBt1)
+                .height(48.dp)
+                .padding(top = 20.dp)
+                .constrainAs(bt2) {
+                    top.linkTo(bt1.bottom)
+                    start.linkTo(parent.start)
+                }) {
+
+            }
+            Button(onClick = { /*TODO*/ }, modifier = Modifier
+                .width(widthBt2)
+                .height(48.dp)
+                .padding(top = 20.dp)
+                .constrainAs(bt3) {
+                    top.linkTo(bt2.bottom)
+                    start.linkTo(parent.start)
+                }) {
+
+            }
+        }
+    }
+
+    @Composable
+    fun TestCustomAnimation() {
+        var mySize by remember {
+            mutableStateOf(MySize(10.dp, 10.dp))
+        }
+        val animSize by animateValueAsState<MySize, AnimationVector2D>(
+            mySize,
+            TwoWayConverter(
+                convertToVector = { size: MySize ->
+                    // Extract a float value from each of the `Dp` fields.
+                    AnimationVector2D(size.width.value, size.height.value)
+                },
+                convertFromVector = { vector: AnimationVector2D ->
+                    MySize(vector.v1.dp, vector.v2.dp)
+                }
+            )
+        )
+
+        Column(modifier = Modifier.fillMaxSize()) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_car), contentDescription = "",
+                modifier = Modifier
+                    .size(animSize.width, animSize.height)
+                    .background(Color.Red)
+            )
+
+            Button(onClick = {
+                mySize =
+                    if (mySize.height == 10.dp) MySize(100.dp, 100.dp) else MySize(10.dp, 10.dp)
+            }) {
+
+            }
+        }
     }
 
     enum class AppState {
         UP, DOWN
     }
+
 
 }
