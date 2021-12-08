@@ -20,6 +20,22 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".screen.VisibilityActivity" />
+        <activity android:name=".screen.AnimatableActivity" />
+        <activity android:name=".screen.AnimateContentSizeActivity" />
+        <activity android:name=".screen.AnimationAsStateActivity" />
+        <activity android:name=".screen.AnimationContentActivity" />
+        <activity android:name=".screen.CrossFadeActivity" />
+        <activity android:name=".screen.CustomAnimationActivity" />
+        <activity android:name=".screen.DecayAnimationActivity" />
+        <activity android:name=".screen.EasingActivity" />
+        <activity android:name=".screen.GestureActivity" />
+        <activity android:name=".screen.KeyFramesActivity" />
+        <activity android:name=".screen.RememberInfiniteActivity" />
+        <activity android:name=".screen.SpringActivity" />
+        <activity android:name=".screen.TargetBasedActivity" />
+        <activity android:name=".screen.UpdateTransitionActivity" />
+        <activity android:name=".screen.VectorDrawableActivity" />
     </application>
 
 </manifest>
