@@ -3,16 +3,15 @@ package com.example.jetbackcomposeexample.screen
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.animateColor
-import androidx.compose.animation.core.animateDp
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.updateTransition
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Icon
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,6 +28,8 @@ class UpdateTransitionActivity : ComponentActivity() {
         UP, DOWN
     }
 
+    @ExperimentalTransitionApi
+    @ExperimentalAnimationApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -36,12 +37,21 @@ class UpdateTransitionActivity : ComponentActivity() {
         }
     }
 
+    @ExperimentalAnimationApi
+    @ExperimentalTransitionApi
     @Composable
     fun TestUpdateTransition() {
         var currentState by remember {
             mutableStateOf(AppState.UP)
         }
+
+//        val currentState = remember {
+//            MutableTransitionState(AppState.UP)
+//        }
+//        currentState.targetState = AppState.DOWN
+
         val transition = updateTransition(targetState = currentState, label = "")
+
 
         val sizeAnim by transition.animateDp { state ->
             when (state) {
@@ -82,12 +92,31 @@ class UpdateTransitionActivity : ComponentActivity() {
                 Icon(
                     painter = painterResource(id = R.drawable.check_icon),
                     contentDescription = "",
-                    tint = colorIcon, modifier = Modifier.size(sizeAnim/2)
+                    tint = colorIcon, modifier = Modifier.size(sizeAnim / 2)
                 )
+                UpView(transition.createChildTransition {
+                    it == AppState.UP
+                })
             }
         }
     }
 
+    @ExperimentalAnimationApi
+    @Composable
+    fun UpView(isUp: Transition<Boolean>) {
+        AnimatedVisibility(visible = isUp.currentState) {
+            Button(
+                onClick = { },
+                modifier = Modifier.size(100.dp),
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red)
+            ) {
+
+            }
+        }
+    }
+
+    @ExperimentalAnimationApi
+    @ExperimentalTransitionApi
     @Preview
     @Composable
     fun show() {
