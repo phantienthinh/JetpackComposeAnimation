@@ -52,6 +52,8 @@ class AnimatableActivity : ComponentActivity() {
 
             LaunchedEffect(rs) {
                 color.animateTo(if (rs) Color.Blue else Color.Yellow)
+                color.animateTo(if (rs) Color.Yellow else Color.Blue)
+                color.animateTo(if (rs) Color.Blue else Color.Yellow)
                 if (rs) {
                     scaleAnim.animateDecay(
                         1f,

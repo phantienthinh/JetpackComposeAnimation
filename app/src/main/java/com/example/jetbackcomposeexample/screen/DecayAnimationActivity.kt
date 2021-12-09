@@ -37,7 +37,7 @@ class DecayAnimationActivity : ComponentActivity() {
             DecayAnimation(
                 animationSpec = FloatExponentialDecaySpec(
                     // How quick the animation will stop
-                    frictionMultiplier = 0.5f
+                    frictionMultiplier = 0.9f
                 ),
                 initialValue = 0f,
                 initialVelocity = 600f

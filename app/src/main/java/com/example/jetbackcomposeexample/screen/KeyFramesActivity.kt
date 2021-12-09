@@ -1,10 +1,12 @@
 package com.example.jetbackcomposeexample.screen
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.keyframes
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -41,14 +43,17 @@ class KeyFramesActivity : ComponentActivity() {
             animationSpec = keyframes {
                 durationMillis = 2000
                 0.2f at 0
-                0.2f at 750
+                0.3f at 750
                 0.4f at 1500
-                0.8f at 1750
-                1f at 2000
+                2f at 1750
+                4f at 3000
             }
         )
+        Log.e("TAG", "AnimationKeyFrames: $value")
         Column(modifier = Modifier.fillMaxSize()) {
-            Button(onClick = { alpha = 1f }, modifier = Modifier.align(Alignment.CenterHorizontally).padding(top = 30.dp)) {
+            Button(onClick = { alpha = 1f }, modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .padding(top = 30.dp)) {
                 Text(text = "Show")
             }
             Image(

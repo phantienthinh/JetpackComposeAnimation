@@ -14,7 +14,6 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -67,17 +66,34 @@ class VisibilityActivity : ComponentActivity() {
             HomeFloatingActionButton(isVisible, this@VisibilityActivity::showNoti)
             AnimatedVisibility(
                 visible = isVisible,
-                exit = slideOutHorizontally() + fadeOut(),
-                enter = slideInHorizontally() + fadeIn(),
+                exit = fadeOut(
+                    animationSpec = tween(durationMillis = 20000)
+                ),
+                enter = fadeIn(
+                    animationSpec = tween(durationMillis = 20000)
+                ),
+
 
                 ) {
-                Image(
-                    painter = painterResource(id = R.drawable.tw_icon),
-                    contentDescription = "",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 100.dp)
-                )
+                Column {
+                    Image(
+                        painter = painterResource(id = R.drawable.tw_icon),
+                        contentDescription = "",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .animateEnterExit(enter = slideInHorizontally(), exit = slideOutHorizontally())
+                            .padding(top = 100.dp)
+                    )
+                    Image(
+                        painter = painterResource(id = R.drawable.tw_icon),
+                        contentDescription = "",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .animateEnterExit(enter = slideInVertically(), exit = slideOutVertically() )
+                            .padding(top = 100.dp)
+                    )
+                }
+
             }
 
         }

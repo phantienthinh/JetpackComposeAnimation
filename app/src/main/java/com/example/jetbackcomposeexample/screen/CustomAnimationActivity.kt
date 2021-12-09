@@ -3,10 +3,7 @@ package com.example.jetbackcomposeexample.screen
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.animation.core.AnimationVector2D
-import androidx.compose.animation.core.AnimationVector4D
-import androidx.compose.animation.core.TwoWayConverter
-import androidx.compose.animation.core.animateValueAsState
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -70,7 +67,6 @@ class CustomAnimationActivity : ComponentActivity() {
             }
         }
     }
-
     @Preview
     @Composable
     fun show() {

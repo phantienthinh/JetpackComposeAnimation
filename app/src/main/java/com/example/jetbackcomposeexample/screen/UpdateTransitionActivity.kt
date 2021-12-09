@@ -1,12 +1,11 @@
 package com.example.jetbackcomposeexample.screen
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.*
-import androidx.compose.animation.core.animateDp
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.updateTransition
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -53,13 +52,19 @@ class UpdateTransitionActivity : ComponentActivity() {
         }
     }
 
+    @OptIn(ExperimentalTransitionApi::class)
     @Composable
     fun TestUpdateTransition() {
-        var currentState by remember {
-            mutableStateOf(AppState.UP)
+        val currentState = remember {
+           val state = MutableTransitionState(AppState.UP)
+            state.targetState = AppState.DOWN
+            Log.e("TAG", "remember : ${state.targetState}")
+            state
         }
-        val transition = updateTransition(targetState = currentState, label = "")
 
+        val transition = updateTransition(transitionState = currentState)
+
+        Log.e("TAG", "currentState : ${currentState.currentState} targetState ${currentState.targetState}", )
         val sizeAnim by transition.animateDp { state ->
             when (state) {
                 AppState.UP -> 100.dp
@@ -87,7 +92,8 @@ class UpdateTransitionActivity : ComponentActivity() {
         Box(modifier = Modifier.fillMaxWidth()) {
             Button(
                 onClick = {
-                    currentState = if (currentState == AppState.UP) AppState.DOWN else AppState.UP
+                    currentState.targetState = if (currentState.currentState == AppState.UP) AppState.DOWN else AppState.UP
+                    Log.e("TAG", "set targetState : ${currentState.targetState}")
                 },
                 modifier = Modifier
                     .height(sizeAnim)
@@ -101,6 +107,38 @@ class UpdateTransitionActivity : ComponentActivity() {
                     contentDescription = "",
                     tint = colorIcon, modifier = Modifier.size(sizeAnim/2)
                 )
+                UpView( transition.createChildTransition {
+                    it == AppState.UP
+                })
+                UpView1( currentState.currentState == AppState.UP)
+            }
+        }
+    }
+
+    @OptIn(ExperimentalAnimationApi::class)
+    @Composable
+    fun UpView(isUp: Transition<Boolean>) {
+        Log.e("TAG", "UpView = ${isUp.currentState}")
+        AnimatedVisibility(visible = isUp.currentState) {
+            Button(
+                onClick = { },
+                modifier = Modifier.size(100.dp),
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red)
+            ) {
+            }
+        }
+    }
+
+    @OptIn(ExperimentalAnimationApi::class)
+    @Composable
+    fun UpView1(isUp: Boolean) {
+        Log.e("TAG", "UpView1 = ${isUp}")
+        AnimatedVisibility(visible = isUp) {
+            Button(
+                onClick = { },
+                modifier = Modifier.size(100.dp),
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red)
+            ) {
             }
         }
     }

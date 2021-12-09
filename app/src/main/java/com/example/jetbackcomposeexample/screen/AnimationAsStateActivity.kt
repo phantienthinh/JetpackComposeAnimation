@@ -75,12 +75,12 @@ class AnimationAsStateActivity : ComponentActivity() {
                             end.linkTo(parent.end)
                         }
                 ) {
-                    Text(text = "down")
+                    Text(text = "down $sizeAnim")
                 }
                 Image(
                     painter = painterResource(id = R.drawable.ic_mood),
                     contentDescription = "", modifier = Modifier
-                        .size(size = sizeAnim)
+                        //.size(size = sizeAnim)
                         .constrainAs(img) {
                             top.linkTo(parent.top)
                             start.linkTo(parent.start)

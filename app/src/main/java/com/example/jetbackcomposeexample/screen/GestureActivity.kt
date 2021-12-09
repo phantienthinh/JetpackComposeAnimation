@@ -1,6 +1,7 @@
 package com.example.jetbackcomposeexample.screen
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.core.Animatable
@@ -43,8 +44,10 @@ class GestureActivity : ComponentActivity() {
             modifier = Modifier
                 .fillMaxSize()
                 .pointerInput(Unit) {
+
                     coroutineScope {
                         while (true) {
+                            Log.d("ManhNQ", "TestGesture: ")
                             // Detect a tap event and obtain its position.
                             val position = awaitPointerEventScope {
                                 awaitFirstDown().position
